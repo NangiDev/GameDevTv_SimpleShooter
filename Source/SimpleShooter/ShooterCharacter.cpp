@@ -3,6 +3,8 @@
 
 #include "ShooterCharacter.h"
 
+#include "Gun.h"
+
 // Sets default values
 AShooterCharacter::AShooterCharacter()
 {
@@ -15,7 +17,11 @@ AShooterCharacter::AShooterCharacter()
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+	GetMesh()->HideBoneByName(TEXT("weapon_r"), PBO_None);
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+	Gun->SetOwner(this);
 }
 
 // Called every frame
@@ -35,6 +41,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("LookRight"), this, &AShooterCharacter::LookRight);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Shoot"), IE_Pressed, this, &AShooterCharacter::Shoot);
 }
 
 void AShooterCharacter::MoveForward(float AxisValue)
@@ -42,18 +49,23 @@ void AShooterCharacter::MoveForward(float AxisValue)
 	AddMovementInput(GetActorForwardVector() * AxisValue);
 }
 
-void AShooterCharacter::LookUp(float AxisValue)
+void AShooterCharacter::LookUp(const float AxisValue)
 {
 	AddControllerPitchInput(AxisValue);
 }
 
-void AShooterCharacter::MoveRight(float AxisValue)
+void AShooterCharacter::MoveRight(const float AxisValue)
 {
 	AddMovementInput(GetActorRightVector() * AxisValue);
 }
 
-void AShooterCharacter::LookRight(float AxisValue)
+void AShooterCharacter::LookRight(const float AxisValue)
 {
 	AddControllerYawInput(AxisValue);
+}
+
+void AShooterCharacter::Shoot()
+{
+	Gun->PullTrigger();
 }
 
