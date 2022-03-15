@@ -16,6 +16,7 @@ class SIMPLESHOOTER_API AShooterPlayerController : public APlayerController
 
 public:
 	virtual void GameHasEnded(AActor* EndGameFocus, bool bIsWinner) override;
+	virtual void BeginPlay() override;
 
 
 private:
@@ -24,9 +25,14 @@ private:
 	TSubclassOf<UUserWidget> WinScreenClass;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LoseScreenClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> HudClass;
 	
 	UPROPERTY(EditAnywhere)
 	float RestartDelay = 5;
 
 	FTimerHandle RestartTimer;
+
+	UPROPERTY()
+	UUserWidget* HUD;
 };
